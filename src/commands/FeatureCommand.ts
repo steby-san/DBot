@@ -88,6 +88,9 @@ const GetPingCommand: Command = {
     await interaction.reply(`🏓 Pong! ${client.ws.ping}ms`);
   }
 };
+
+
+
 const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand, GetPingCommand];
 
 const featureCommands = new Collection<string, Command>();
