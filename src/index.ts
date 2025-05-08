@@ -19,7 +19,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
   ],
-});
+}); 
 
 const start = async () => {
   await client.login(TOKEN);

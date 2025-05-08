@@ -6,10 +6,11 @@ interface RichPreProps {
   type: ActivityType;
   url?: string;
 }
+
 const activityDetails: RichPreProps = {
-  name: "Maidon đi ngủ",
-  type: ActivityType.Watching,
-  // Streaming, Listening, Watching, Competing, Custom
+  name: "Cooking myself",
+  type: ActivityType.Streaming,
+  url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 };
 
 const Ready = () => ({
@@ -30,20 +31,16 @@ const Ready = () => ({
         console.error("\x1b[31m%s\x1b[0m", "e: Client user is not available.");
         return;
       }
-      client.user.setPresence({
-        activities: [{
-          name: activityDetails.name,
-          type: activityDetails.type,
-          url: activityDetails.url,
-        }],
-        status: PresenceUpdateStatus.Online,
+      client.user.setActivity(activityDetails.name, { 
+        type: activityDetails.type,
+        url: activityDetails.url 
       });
+      client.user.setStatus(PresenceUpdateStatus.Online);
       console.log("Set RP thành công");
     } catch (error) {
       console.error("\x1b[31m%s\x1b[0m", "e:", error);
     }
   },
 });
-
 
 export default Ready;

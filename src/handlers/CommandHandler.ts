@@ -1,4 +1,5 @@
-import commandCollection from '@/commands/FeatureCommand';
+import featureCommands from '@/commands/FeatureCommand';
+import messageCommands from '@/commands/MessageCommand';
 import { Client } from 'discord.js';
 
 import { REST } from '@discordjs/rest';
@@ -11,17 +12,21 @@ const CommandHandler = (client: Client) => {
   (async () => {
     try {
       console.log('🔄 Đang đăng ký lại lệnh mới...');
-      const commandData = Array.from(commandCollection.values()).map(command => command.data.toJSON());
       
+      const featureCommandData = Array.from(featureCommands.values()).map(command => command.data.toJSON());
+      const messageCommandData = Array.from(messageCommands.values()).map(command => command.data.toJSON());
+      
+      const commandData = [...featureCommandData, ...messageCommandData];
+
       await rest.put(
         Routes.applicationGuildCommands(process.env.CLIENT_ID as string, process.env.GUILD_ID as string),
         { body: commandData },
       );
-      console.log('✅ Đăng ký lệnh thành công: ', Array.from(commandCollection.keys()).join(', '));
+      console.log('✅ Đăng ký lệnh thành công: ', commandData.map(command => command.name).join(', '));
       
     } catch (error) {
       console.error("\x1b[31m%s\x1b[0m", "Lỗi khi đăng ký lệnh:", error);
-    }
+    }    
   })();
 }
 

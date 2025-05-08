@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, SlashCommandOptionsOnlyBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, Collection } from 'discord.js';
 import Command from '@/types/Command';
 
 const GetServerInfoCommand: Command = {
