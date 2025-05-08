@@ -88,7 +88,24 @@ const GetPingCommand: Command = {
     await interaction.reply(`🏓 Pong! ${client.ws.ping}ms`);
   }
 };
-const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand, GetPingCommand];
+
+// Tìm kiếm google
+const SearchGoogleCommand: Command = {
+  data: new SlashCommandBuilder()
+    .setName('google')
+    .setDescription('Tìm kiếm google'),
+  async execute(interaction: ChatInputCommandInteraction) {
+    const query = interaction.options.getString('query');
+    if (!query) {
+      await interaction.reply('Vui lòng nhập từ khóa tìm kiếm');
+      return;
+    }
+    const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    await interaction.reply(url);
+  }
+};
+
+const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand, GetPingCommand, SearchGoogleCommand];
 
 const featureCommands = new Collection<string, Command>();
 
