@@ -1,9 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, SlashCommandOptionsOnlyBuilder } from 'discord.js';
+import Command from '@/types/Command';
 
-export interface Command {
-  data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
-  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
-}
 
 // lấy avatar của người khác
 const GetUserAvatarCommand: Command = {
