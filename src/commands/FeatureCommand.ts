@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType, User } from 'discord.js';
 import Command from '@/types/Command';
 import { setTwitterConfig } from '@/config/twitterConfig';
+import { setCodeBlockConfig } from '@/config/codeBlockConfig';
 
 
 // lấy avatar của người khác
@@ -356,7 +357,47 @@ const TwitterCommand: Command = {
   }
 };
 
-const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand, GetPingCommand, ShipCommand, PollCommand, TwitterCommand];
+// Toggle tính năng code blocks
+const CodeBlockCommand: Command = {
+    data: new SlashCommandBuilder()
+        .setName('codeblock')
+        .setDescription('Bật/tắt tính năng tự động format code blocks')
+        .addBooleanOption(option =>
+            option.setName('enabled')
+                .setDescription('Bật hoặc tắt tính năng')
+                .setRequired(true)),
+    async execute(interaction: ChatInputCommandInteraction) {
+        try {
+            if (!interaction.guild) {
+                await interaction.reply({ content: '❌ Lệnh này chỉ có thể sử dụng trong server!', ephemeral: true });
+                return;
+            }
+
+            const enabled = interaction.options.getBoolean('enabled');
+            if (enabled === null) {
+                await interaction.reply({ content: '❌ Vui lòng chọn trạng thái bật/tắt!', ephemeral: true });
+                return;
+            }
+
+            setCodeBlockConfig(interaction.guild.id, enabled);
+            await interaction.reply({ 
+                content: enabled ? 
+                    '✅ Đã bật tính năng tự động format code blocks!' : 
+                    '❌ Đã tắt tính năng tự động format code blocks!',
+                ephemeral: true 
+            });
+        } catch (error) {
+            console.error("\x1b[31m%s\x1b[0m", "Lỗi lệnh codeblock:", error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content: 'Đã có lỗi xảy ra!', ephemeral: true });
+            } else {
+                await interaction.reply({ content: 'Đã có lỗi xảy ra!', ephemeral: true });
+            }
+        }
+    }
+};
+
+const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand, GetPingCommand, ShipCommand, PollCommand, TwitterCommand, CodeBlockCommand];
 
 const featureCommands = new Collection<string, Command>();
 
