@@ -48,12 +48,28 @@ const Ready = () => ({
         const config = getWelcomeConfig(member.guild.id);
         
         if (config) {
-          const channel = member.guild.channels.cache.get(config.channelId);
-          if (channel && channel.isTextBased()) {
-            const welcomeMessage = config.message
-              .replace('{user}', member.toString())
-              .replace('{server}', member.guild.name);
-            await channel.send(welcomeMessage);
+          // Gửi tin nhắn chào mừng nếu có cấu hình
+          if (config.channelId && config.message) {
+            const channel = member.guild.channels.cache.get(config.channelId);
+            if (channel && channel.isTextBased()) {
+              const welcomeMessage = config.message
+                .replace('{user}', member.toString())
+                .replace('{server}', member.guild.name);
+              await channel.send(welcomeMessage);
+            }
+          }
+
+          // Tự động gán role nếu có cấu hình
+          if (config.roleId) {
+            const role = member.guild.roles.cache.get(config.roleId);
+            if (role) {
+              try {
+                await member.roles.add(role);
+                console.log(`Đã tự động gán role ${role.name} cho ${member.user.tag}`);
+              } catch (error) {
+                console.error(`Không thể gán role ${role.name} cho ${member.user.tag}:`, error);
+              }
+            }
           }
         } else {
           // Nếu không có cấu hình, sử dụng kênh mặc định
@@ -68,7 +84,7 @@ const Ready = () => ({
           }
         }
       } catch (error) {
-        console.error('Lỗi khi gửi tin nhắn chào mừng:', error);
+        console.error('Lỗi khi xử lý thành viên mới:', error);
       }
     });
   },

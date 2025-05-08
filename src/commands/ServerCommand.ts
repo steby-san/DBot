@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Collection } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, GuildMember } from 'discord.js';
 import Command from '@/types/Command';
 import { setWelcomeConfig } from '@/config/welcomeConfig';
 
@@ -101,7 +101,53 @@ const WelcomeMessageCommand: Command = {
     }
 };
 
-const commandModules = [GetServerInfoCommand, CountMessageCommand, CountMembersCommand, WelcomeMessageCommand];
+// Auto-Asign role mặc định khi có người mới tham gia
+const AutoAssignRoleCommand: Command = {
+    data: new SlashCommandBuilder()
+        .setName('autoassignrole')
+        .setDescription('Tự động gán role cho thành viên mới')
+        .addRoleOption(option =>
+            option.setName('role')
+                .setDescription('Role sẽ được gán cho thành viên mới')
+                .setRequired(true)),
+    async execute(interaction: ChatInputCommandInteraction) {
+        try {
+            await interaction.deferReply();
+
+            const role = interaction.options.getRole('role');
+            if (!role || !interaction.guild) {
+                await interaction.editReply('Vui lòng cung cấp role để tự động gán');
+                return;
+            }
+
+            // Kiểm tra quyền của bot
+            if (!interaction.guild.members.me?.permissions.has('ManageRoles')) {
+                await interaction.editReply('Bot không có quyền quản lý role!');
+                return;
+            }
+
+            // Kiểm tra vị trí của role
+            if (role.position >= (interaction.guild.members.me.roles.highest.position)) {
+                await interaction.editReply('Role này có vị trí cao hơn hoặc bằng với role cao nhất của bot!');
+                return;
+            }
+
+            // Lưu role vào cấu hình
+            setWelcomeConfig(interaction.guild.id, '', '', role.id);
+
+            await interaction.editReply(`Đã thiết lập tự động gán role ${role} cho thành viên mới!`);
+        } catch (error) {
+            console.error('Lỗi lệnh autoassignrole:', error);
+            if (!interaction.replied && !interaction.deferred) {
+                await interaction.reply({ content: 'Đã có lỗi xảy ra!', ephemeral: true });
+            } else {
+                await interaction.editReply('Đã có lỗi xảy ra!');
+            }
+        }
+    }
+};
+
+const commandModules = [GetServerInfoCommand, CountMessageCommand, CountMembersCommand, WelcomeMessageCommand, AutoAssignRoleCommand];
 
 const serverCommands = new Collection<string, Command>();
 
