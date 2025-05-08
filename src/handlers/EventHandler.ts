@@ -1,4 +1,5 @@
 import Ready from '@/events/Ready';
+import MessageCreate from '@/events/MessageCreate';
 import { Client } from 'discord.js';
 
 interface Event {
@@ -9,7 +10,8 @@ interface Event {
 
 // Lưu trữ các events
 const events: Event[] = [
-  Ready()
+  Ready(),
+  MessageCreate()
 ];
 
 // reg các event cho client

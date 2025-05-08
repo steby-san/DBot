@@ -1,5 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType, User } from 'discord.js';
 import Command from '@/types/Command';
+import { setTwitterConfig } from '@/config/twitterConfig';
 
 
 // lấy avatar của người khác
@@ -315,7 +316,47 @@ async function showResults(message: any, options: string[]) {
   await message.reply({ embeds: [resultEmbed], ephemeral: true });
 }
 
-const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand, GetPingCommand, ShipCommand, PollCommand];
+// Toggle tính năng tự động chuyển đổi link Twitter
+const TwitterCommand: Command = {
+  data: new SlashCommandBuilder()
+    .setName('twitter')
+    .setDescription('Bật/tắt tính năng tự động chuyển đổi link Twitter')
+    .addBooleanOption(option =>
+      option.setName('enabled')
+        .setDescription('Bật hoặc tắt tính năng')
+        .setRequired(true)),
+  async execute(interaction: ChatInputCommandInteraction) {
+    try {
+      if (!interaction.guild) {
+        await interaction.reply({ content: '❌ Lệnh này chỉ có thể sử dụng trong server!', ephemeral: true });
+        return;
+      }
+
+      const enabled = interaction.options.getBoolean('enabled');
+      if (enabled === null) {
+        await interaction.reply({ content: '❌ Vui lòng chọn trạng thái bật/tắt!', ephemeral: true });
+        return;
+      }
+
+      setTwitterConfig(interaction.guild.id, enabled);
+      await interaction.reply({ 
+        content: enabled ? 
+          '✅ Đã bật tính năng tự động chuyển đổi link Twitter!' : 
+          '❌ Đã tắt tính năng tự động chuyển đổi link Twitter!',
+        ephemeral: true 
+      });
+    } catch (error) {
+      console.error("\x1b[31m%s\x1b[0m", "Lỗi lệnh twitter:", error);
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({ content: 'Đã có lỗi xảy ra!', ephemeral: true });
+      } else {
+        await interaction.reply({ content: 'Đã có lỗi xảy ra!', ephemeral: true });
+      }
+    }
+  }
+};
+
+const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand, GetPingCommand, ShipCommand, PollCommand, TwitterCommand];
 
 const featureCommands = new Collection<string, Command>();
 
