@@ -117,7 +117,7 @@ const ShipCommand: Command = {
       title: `${user1.username} và ${user2.username}`,
       description: `Độ tương thích: ${compatibility}%`,
       image: {
-        url: `https://i.pinimg.com/originals/86/00/bb/8600bb6e97e5043094c8bc4e643fcc0d.gif`
+        url: `https://cdn.discordapp.com/emojis/1369493738266693692.webp?size=128`
       }
     };
     await interaction.reply({ embeds: [embed] });
