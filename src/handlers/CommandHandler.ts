@@ -1,6 +1,7 @@
 import featureCommands from '@/commands/FeatureCommand';
 import messageCommands from '@/commands/MessageCommand';
 import serverCommands from '@/commands/ServerCommand';
+import adminCommands from '@/commands/AdminCommand';
 import { Client, Events } from 'discord.js';
 
 import { REST } from '@discordjs/rest';
@@ -19,7 +20,8 @@ const CommandHandler = (client: Client) => {
 
     const command = messageCommands.get(interaction.commandName) || 
                   featureCommands.get(interaction.commandName) || 
-                  serverCommands.get(interaction.commandName);
+                  serverCommands.get(interaction.commandName) ||
+                  adminCommands.get(interaction.commandName);
     
     if (!command) {
       console.error(`❌ Không tìm thấy lệnh: ${interaction.commandName}`);
@@ -79,12 +81,14 @@ const CommandHandler = (client: Client) => {
       const featureCommandData = Array.from(featureCommands.values()).map(command => command.data.toJSON());
       const messageCommandData = Array.from(messageCommands.values()).map(command => command.data.toJSON());
       const serverCommandData = Array.from(serverCommands.values()).map(command => command.data.toJSON());
+      const adminCommandData = Array.from(adminCommands.values()).map(command => command.data.toJSON());
 
       console.log('📝 Danh sách lệnh message:', messageCommandData.map(cmd => cmd.name));
       console.log('📝 Danh sách lệnh feature:', featureCommandData.map(cmd => cmd.name));
       console.log('📝 Danh sách lệnh server:', serverCommandData.map(cmd => cmd.name));
+      console.log('📝 Danh sách lệnh admin:', adminCommandData.map(cmd => cmd.name));
 
-      const commandData = [...featureCommandData, ...messageCommandData, ...serverCommandData];
+      const commandData = [...featureCommandData, ...messageCommandData, ...serverCommandData, ...adminCommandData];
 
       if (!process.env.CLIENT_ID || !process.env.GUILD_ID) {
         throw new Error('Thiếu CLIENT_ID hoặc GUILD_ID trong file .env');
