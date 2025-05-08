@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, PermissionsBitField, EmbedBuilder, Colors } from 'discord.js';
-import Command from '@/types/Command';
+import Command from '../types/Command';
 // Trao quyền lực cho con bot
 
 const BanCommand: Command = {

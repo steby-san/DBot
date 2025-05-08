@@ -1,7 +1,7 @@
-import featureCommands from '@/commands/FeatureCommand';
-import messageCommands from '@/commands/MessageCommand';
-import serverCommands from '@/commands/ServerCommand';
-import adminCommands from '@/commands/AdminCommand';
+import featureCommands from '../commands/FeatureCommand';
+import messageCommands from '../commands/MessageCommand';
+import serverCommands from '../commands/ServerCommand';
+import adminCommands from '../commands/AdminCommand';
 import { Client, Events } from 'discord.js';
 
 import { REST } from '@discordjs/rest';

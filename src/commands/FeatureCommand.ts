@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType, User } from 'discord.js';
-import Command from '@/types/Command';
-import { setTwitterConfig } from '@/config/twitterConfig';
-import { setCodeBlockConfig } from '@/config/codeBlockConfig';
+import Command from '../types/Command';
+import { setTwitterConfig } from '../config/twitterConfig';
+import { setCodeBlockConfig } from '../config/codeBlockConfig';
 
 
 // lấy avatar của người khác

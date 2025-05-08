@@ -1,5 +1,5 @@
 import { Client, ActivityType, PresenceUpdateStatus, GuildMember, Role } from 'discord.js';
-import { getWelcomeConfig } from '@/config/welcomeConfig';
+import { getWelcomeConfig } from '../config/welcomeConfig';
 
 // Activity của con bot
 interface RichPreProps {

@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { getTwitterConfig } from '@/config/twitterConfig';
-import { getCodeBlockConfig } from '@/config/codeBlockConfig';
+import { getTwitterConfig } from '../config/twitterConfig';
+import { getCodeBlockConfig } from '../config/codeBlockConfig';
 
 const SUPPORTED_LANGUAGES: Record<string, string> = {
     'js': 'javascript',

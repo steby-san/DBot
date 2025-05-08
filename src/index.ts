@@ -2,8 +2,8 @@ import { config } from "dotenv";
 config();
 
 import { Client, GatewayIntentBits } from "discord.js";
-import EventHandler from "@/handlers/EventHandler";
-import CommandHandler from "@/handlers/CommandHandler";
+import EventHandler from "./handlers/EventHandler";
+import CommandHandler from "./handlers/CommandHandler";
 
 const TOKEN = process.env.TOKEN;
 if (!TOKEN) {
