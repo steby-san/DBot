@@ -1,4 +1,4 @@
-import { Client, ActivityType, PresenceUpdateStatus, GuildMember } from 'discord.js';
+import { Client, ActivityType, PresenceUpdateStatus, GuildMember, Role } from 'discord.js';
 import { getWelcomeConfig } from '@/config/welcomeConfig';
 
 // Activity của con bot
@@ -12,6 +12,20 @@ const activityDetails: RichPreProps = {
   name: "Cooking myself",
   type: ActivityType.Streaming,
   url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+};
+
+// Hàm gán role với cơ chế retry
+const assignRoleWithRetry = async (member: GuildMember, role: Role, maxRetries = 3) => {
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            await member.roles.add(role);
+            return true;
+        } catch (error: any) {
+            if (i === maxRetries - 1) throw error;
+            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        }
+    }
+    return false;
 };
 
 const Ready = () => ({
@@ -64,12 +78,28 @@ const Ready = () => ({
             const role = member.guild.roles.cache.get(config.roleId);
             if (role) {
               try {
-                await member.roles.add(role);
+                await assignRoleWithRetry(member, role);
                 console.log(`Đã tự động gán role ${role.name} cho ${member.user.tag}`);
-              } catch (error) {
-                console.error(`Không thể gán role ${role.name} cho ${member.user.tag}:`, error);
+              } catch (error: any) {
+                console.error(`Lỗi khi gán role ${role.name} cho ${member.user.tag}:`, error);
+                
+                // Thông báo chi tiết cho admin
+                const adminChannel = member.guild.channels.cache.find(ch => 
+                  ch.name.toLowerCase().includes('admin') || 
+                  ch.name.toLowerCase().includes('mod')
+                );
+                
+                if (adminChannel?.isTextBased()) {
+                  await adminChannel.send({
+                    content: `⚠️ Lỗi khi gán role ${role.name} cho ${member.user.tag}:\n${error.message}`
+                  });
+                }
               }
+            } else {
+              console.error(`Không tìm thấy role với ID ${config.roleId} trong server ${member.guild.name}`);
             }
+          } else {
+            console.log(`[DEBUG] Không có roleId trong config cho server ${member.guild.id}`);
           }
         } else {
           // Nếu không có cấu hình, sử dụng kênh mặc định

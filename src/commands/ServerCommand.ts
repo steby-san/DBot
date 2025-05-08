@@ -1,6 +1,6 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, GuildMember } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, Collection, GuildMember, PermissionsBitField } from 'discord.js';
 import Command from '@/types/Command';
-import { setWelcomeConfig } from '@/config/welcomeConfig';
+import { setWelcomeConfig, getWelcomeConfig } from '@/config/welcomeConfig';
 
 const GetServerInfoCommand: Command = {
     data: new SlashCommandBuilder()
@@ -120,20 +120,34 @@ const AutoAssignRoleCommand: Command = {
                 return;
             }
 
-            // Kiểm tra quyền của bot
-            if (!interaction.guild.members.me?.permissions.has('ManageRoles')) {
-                await interaction.editReply('Bot không có quyền quản lý role!');
+            // Kiểm tra đầy đủ quyền cần thiết
+            const requiredPermissions = [
+                PermissionsBitField.Flags.ManageRoles,
+                PermissionsBitField.Flags.ViewChannel,
+                PermissionsBitField.Flags.SendMessages
+            ];
+
+            if (!interaction.guild.members.me?.permissions.has(requiredPermissions)) {
+                await interaction.editReply('Bot thiếu quyền cần thiết để thực hiện lệnh này!');
                 return;
             }
 
-            // Kiểm tra vị trí của role
+            // Kiểm tra role hợp lệ
+            if (role.managed) {
+                await interaction.editReply('Không thể gán role được quản lý bởi bot khác!');
+                return;
+            }
+
             if (role.position >= (interaction.guild.members.me.roles.highest.position)) {
                 await interaction.editReply('Role này có vị trí cao hơn hoặc bằng với role cao nhất của bot!');
                 return;
             }
 
-            // Lưu role vào cấu hình
-            setWelcomeConfig(interaction.guild.id, '', '', role.id);
+            // Lưu role vào cấu hình với backup
+            const backupRoleId = role.id;
+            // Giữ lại cấu hình cũ nếu có
+            const oldConfig = getWelcomeConfig(interaction.guild.id) || { channelId: '', message: '' };
+            setWelcomeConfig(interaction.guild.id, oldConfig.channelId, oldConfig.message, backupRoleId);
 
             await interaction.editReply(`Đã thiết lập tự động gán role ${role} cho thành viên mới!`);
         } catch (error) {

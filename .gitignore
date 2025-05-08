@@ -15,3 +15,6 @@
 .editorconfig
 .env
 node_modules
+
+# Bot data
+data/

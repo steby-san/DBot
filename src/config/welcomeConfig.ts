@@ -1,19 +1,26 @@
+import configManager from './configManager';
+import { Guild } from 'discord.js';
+
 interface WelcomeConfig {
-  channelId: string;
-  message: string;
-  roleId?: string;
+    channelId: string;
+    message: string;
+    roleId?: string;
 }
 
-const welcomeConfigs = new Map<string, WelcomeConfig>();
+const CONFIG_NAME = 'welcome';
 
 export const setWelcomeConfig = (guildId: string, channelId: string, message: string, roleId?: string) => {
-  welcomeConfigs.set(guildId, { channelId, message, roleId });
+    const config = { channelId, message, roleId };
+    configManager.saveConfig(CONFIG_NAME, { [guildId]: config });
 };
 
 export const getWelcomeConfig = (guildId: string): WelcomeConfig | undefined => {
-  return welcomeConfigs.get(guildId);
+    const configs = configManager.getConfig(CONFIG_NAME);
+    return configs[guildId];
 };
 
 export const removeWelcomeConfig = (guildId: string) => {
-  welcomeConfigs.delete(guildId);
+    const configs = configManager.getConfig(CONFIG_NAME);
+    delete configs[guildId];
+    configManager.saveConfig(CONFIG_NAME, configs);
 }; 

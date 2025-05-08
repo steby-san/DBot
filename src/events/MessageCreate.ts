@@ -57,14 +57,14 @@ const MessageCreate = () => ({
 const handleTwitterLinks = async (message: Message) => {
     if (!message.guild || !getTwitterConfig(message.guild.id)) return;
 
-    // Regex để tìm link Twitter
-    const twitterRegex = /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(\w+)\/status\/(\d+)/g;
-    const twitterMatches = [...message.content.matchAll(twitterRegex)];
+    // Regex để tìm link X (Twitter)
+    const xRegex = /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/(\w+)\/status\/(\d+)/g;
+    const xMatches = [...message.content.matchAll(xRegex)];
 
-    if (twitterMatches.length === 0) return;
+    if (xMatches.length === 0) return;
 
-    // Chuyển đổi mỗi link Twitter thành fxtwitter
-    const convertedLinks = twitterMatches.map(match => {
+    // Chuyển đổi mỗi link X thành fxtwitter
+    const convertedLinks = xMatches.map(match => {
         const [_, username, statusId] = match;
         return `https://fxtwitter.com/${username}/status/${statusId}`;
     });
@@ -76,12 +76,12 @@ const handleTwitterLinks = async (message: Message) => {
             allowedMentions: { repliedUser: false }
         });
 
-        // Xóa embed của link Twitter người dùng gửi
+        // Xóa embed của link X người dùng gửi
         if (message.embeds.length > 0) {
             await message.suppressEmbeds(true);
         }
     } catch (error) {
-        console.error('Lỗi khi xử lý Twitter links:', error);
+        console.error('Lỗi khi xử lý X links:', error);
     }
 };
 
