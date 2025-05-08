@@ -81,12 +81,22 @@ const FlipCoinCommand: Command = {
   }
 };
 
-const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand];
+// Lấy ping của bot 
+const GetPingCommand: Command = {
+  data: new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Ping của bot?'),
+  async execute(interaction: ChatInputCommandInteraction) {
+    const client = interaction.client;
+    await interaction.reply(`🏓 Pong! ${client.ws.ping}ms`);
+  }
+};
+const commandModules = [GetUserAvatarCommand, RollDiceCommand, FlipCoinCommand, GetPingCommand];
 
-const commands = new Collection<string, Command>();
+const featureCommands = new Collection<string, Command>();
 
 for (const command of commandModules) {
-  commands.set(command.data.name, command);
+  featureCommands.set(command.data.name, command);
 }
 
-export default commands;
+export default featureCommands;
