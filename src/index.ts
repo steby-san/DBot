@@ -30,6 +30,6 @@ try {
   EventHandler(client);
   CommandHandler(client);  
 } catch (error) {
-  console.error("\x1b[31m%s\x1b[0m", "e:", error);
+  console.error("\x1b[31m%s\x1b[0m", "e lỗi:", error);
   process.exit(1);
 }

@@ -7,7 +7,7 @@ interface RichPreProps {
   url?: string;
 }
 const activityDetails: RichPreProps = {
-  name: "BDSM maidon",
+  name: "Maidon đi ngủ",
   type: ActivityType.Watching,
   // Streaming, Listening, Watching, Competing, Custom
 };
