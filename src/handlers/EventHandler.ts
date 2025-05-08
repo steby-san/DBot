@@ -1,6 +1,5 @@
 import Ready from '@/events/Ready';
-import { Client, Interaction, CacheType } from 'discord.js';
-import commandCollection from '@/commands/FeatureCommand';
+import { Client } from 'discord.js';
 
 interface Event {
   name: string;
@@ -32,38 +31,6 @@ const EventHandler = (client: Client) => {
       console.log(`✅ Client đã sẵn sàng!`);
     }
   });
-
-  client.on('interactionCreate', async (interaction: Interaction<CacheType>) => {
-    if (!interaction.isChatInputCommand()) return;
-
-    const command = commandCollection.get(interaction.commandName);
-
-    if (!command) {
-      console.error(`Không tìm thấy lệnh ${interaction.commandName}.`);
-      try {
-        await interaction.reply({ content: 'Lệnh này không tồn tại hoặc đã bị lỗi!', ephemeral: true });
-      } catch (replyError) {
-        console.error('Lỗi khi gửi thông báo lệnh không tồn tại:', replyError);
-      }
-      return;
-    }
-
-    try {
-      await command.execute(interaction);
-    } catch (error) {
-      console.error(`Lỗi khi thực thi lệnh ${interaction.commandName}:`, error);
-      try {
-        if (interaction.replied || interaction.deferred) {
-          await interaction.followUp({ content: 'Đã xảy ra lỗi khi thực thi lệnh này!', ephemeral: true });
-        } else {
-          await interaction.reply({ content: 'Đã xảy ra lỗi khi thực thi lệnh này!', ephemeral: true });
-        }
-      } catch (replyError) {
-          console.error(`Lỗi khi gửi thông báo lỗi thực thi lệnh ${interaction.commandName}:`, replyError);
-      }
-    }
-  });
-
 }
 
 export default EventHandler;
